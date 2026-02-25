@@ -47,7 +47,7 @@ def test_model(tracer, response_model, MODEL=os.getenv("MODEL")):
         data = open("local_data/"+row["data_file"], encoding='utf-8')
         process_data=data.read()
 
-        prompt = PROCESS_PROMPT.format(user_request=user_request, process_data=process_data)
+        prompt = PROCESS_PROMPT.format(user_request=user_request, file_name=row["data_file"], process_data=process_data)
         ask_about_process(tracer,prompt, response_model=response_model)
     
     
