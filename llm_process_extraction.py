@@ -13,7 +13,7 @@ MODEL = os.getenv("MODEL")
 
 def ask_about_process(tracer, prompt, response_model):
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("BASE_URL"))
-    client = instructor.from_openai(client)
+    client = instructor.from_openai(client, mode=instructor.Mode.JSON)
     
     with tracer.start_as_current_span("Process", openinference_span_kind="agent") as span:
         span.set_input(prompt)
