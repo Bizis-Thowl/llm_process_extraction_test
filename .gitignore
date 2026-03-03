@@ -2,6 +2,13 @@
 
 local_data/
 
+graphrag_test/prompts/
+graphrag_test/input/
+graphrag_test/settings.yaml
+graphrag_test/logs
+graphrag_test/output
+graphrag_test/cache
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
