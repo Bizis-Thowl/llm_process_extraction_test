@@ -119,7 +119,7 @@ def solve(question, solved_questions, original_question, process_data, client):
 if __name__ == "__main__":
 
     # Starting the tracer
-    tracer = init_phoenix("llm-process-extraction-vg")
+    tracer = init_phoenix("llm-process-extraction-decomposition")
 
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("BASE_URL"))
     client = instructor.from_openai(client, mode=instructor.Mode.JSON)
