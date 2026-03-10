@@ -2,9 +2,9 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 import instructor
-from response_model.Process import ProcessResponse
-from prompts.process_prompt import PROCESS_PROMPT
-from init_phoenix import init_phoenix
+from process_extraction.response_model.Process import ProcessResponse
+from process_extraction.prompts.process_prompt import PROCESS_PROMPT
+from process_extraction.init_phoenix import init_phoenix
 from opentelemetry.trace import StatusCode
 import pandas as pd
 load_dotenv()
