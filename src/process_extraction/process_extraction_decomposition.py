@@ -2,14 +2,14 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 import instructor
-from response_model.Process import ProcessResponse
-from prompts.decomposition_prompt import DECOMPOSITION_PROMPT
-from prompts.final_answer_prompt import FINAL_ANSWER_PROMPT
-from prompts.solve_subquestion_prompt import SOLVE_SUBQUESTION_PROMPT
-from init_phoenix import init_phoenix
+from process_extraction.response_model.Process import ProcessResponse
+from process_extraction.prompts.decomposition_prompt import DECOMPOSITION_PROMPT
+from process_extraction.prompts.final_answer_prompt import FINAL_ANSWER_PROMPT
+from process_extraction.prompts.solve_subquestion_prompt import SOLVE_SUBQUESTION_PROMPT
+from process_extraction.init_phoenix import init_phoenix
 from opentelemetry.trace import StatusCode
 import pandas as pd
-from response_model.Decomposition import SubQuestionWithAnswer, SubQuestion
+from process_extraction.response_model.Decomposition import SubQuestionWithAnswer, SubQuestion
 from typing import Iterable
 
 load_dotenv()
