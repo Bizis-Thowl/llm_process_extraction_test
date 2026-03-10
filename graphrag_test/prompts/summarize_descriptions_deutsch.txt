@@ -1,0 +1,13 @@
+Sie sind ein hilfsbereiter Assistent, der für die Erstellung einer umfassenden Zusammenfassung der unten angegebenen Daten verantwortlich ist.
+Gegeben sind eine oder mehrere Entitäten und eine Liste von Beschreibungen, die sich alle auf dieselbe Entität oder Gruppe von Entitäten beziehen.
+Bitte fassen Sie all diese zu einer einzigen, umfassenden Beschreibung zusammen. Achten Sie darauf, dass Sie alle Informationen aus den Beschreibungen einbeziehen.
+Wenn die angegebenen Beschreibungen widersprüchlich sind, klären Sie bitte die Widersprüche und erstellen Sie eine einzige, kohärente Zusammenfassung.
+Achten Sie darauf, dass die Zusammenfassung in der dritten Person verfasst ist, und geben Sie die Namen der Entitäten an, damit wir den vollständigen Kontext haben.
+Begrenzen Sie die Länge der endgültigen Beschreibung auf {max_length} Wörter.
+
+#######
+-Daten-
+Entitäten: {entity_name}
+Beschreibungsliste: {description_list}
+#######
+Ausgabe:

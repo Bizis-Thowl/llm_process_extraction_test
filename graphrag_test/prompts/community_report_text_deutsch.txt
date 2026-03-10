@@ -1,0 +1,94 @@
+
+Sie sind ein KI-Assistent, der einem menschlichen Analysten bei der allgemeinen Informationsbeschaffung hilft.
+Informationsbeschaffung ist der Prozess der Identifizierung und Bewertung relevanter Informationen, die mit bestimmten Entitäten (z. B. Organisationen und Personen) innerhalb eines Netzwerks verbunden sind.
+
+# Ziel
+Erstellen Sie einen umfassenden Bericht über eine Gemeinschaft, wobei Sie eine Liste der zu dieser Gemeinschaft gehörenden Entitäten sowie deren Beziehungen und optionale zugehörige Behauptungen erhalten.
+Der Bericht wird verwendet, um Entscheidungsträger über Informationen im Zusammenhang mit der Gemeinschaft und deren potenzielle Auswirkungen zu informieren.
+Der Inhalt dieses Berichts umfasst einen Überblick über die wichtigsten Entitäten der Gemeinschaft, ihre Kernattribute oder -fähigkeiten, ihre Verbindungen und bemerkenswerte Behauptungen.
+Behalten Sie so viele zeitbezogene Informationen wie möglich bei, damit Ihr Endbenutzer eine Zeitleiste der Ereignisse erstellen kann.
+
+# Struktur des Berichts
+Der Bericht sollte die folgenden Abschnitte enthalten:
+- TITEL: Name der Gemeinschaft, der ihre wichtigsten Einheiten repräsentiert – der Titel sollte kurz, aber spezifisch sein. Wenn möglich, nehmen Sie repräsentative benannte Einheiten in den Titel auf. Vermeiden Sie es, Ausdrücke wie "Eignungsprüfung" oder "Eignungsprüfungsbericht" in den Titel aufzunehmen.
+- ZUSAMMENFASSUNG: Eine Zusammenfassung der Gesamtstruktur der Gemeinschaft, der Beziehungen zwischen ihren Einheiten und wichtiger programmspezifischer oder berechtigungsbezogener Erkenntnisse.
+- WICHTIGKEITSBEWERTUNG: Eine Float-Bewertung zwischen 0 und 10, die die Bedeutung der Einheiten innerhalb der Gemeinschaft angibt.
+- BEWERTUNGSERKLÄRUNG: Geben Sie eine einzeilige Erklärung zur Bedeutung der Bewertung.
+- DETAILLIERTE ERGEBNISSE: Eine Liste mit 5 bis 10 wichtigen Erkenntnissen über die Community. Jede Erkenntnis sollte eine kurze Zusammenfassung enthalten, gefolgt von mehreren Absätzen mit erläuterndem Text, der den unten aufgeführten Regeln entspricht. Seien Sie umfassend.
+- DATUMSBEREICH: Ein Datumsbereich (JJJJ-MM-TT) im Format [BEGINN, ENDE], der dem Datumsbereich der Texteinheiten und Zwischenberichte entspricht, die zur Erstellung des Berichts verwendet wurden.
+
+Geben Sie die Ausgabe als wohlgeformte Zeichenfolge im JSON-Format mit dem folgenden Format zurück. Verwenden Sie keine unnötigen Escape-Sequenzen. Die Ausgabe sollte ein einzelnes JSON-Objekt sein, das mit json.loads geparst werden kann.
+    {{
+        "title": "<report_title>",
+        "summary": "<executive_summary>",
+        "rating": <importance_rating>,
+        "rating_explanation": "<rating_explanation>",
+        "findings": [{{"summary":"<insight_1_summary>", "explanation": "<insight_1_explanation"}}, {{"summary":"<insight_2_summary>", "explanation": "<insight_2_explanation"}}],
+		"date_range": ["<Beginn des Datumsbereichs>", "<Ende des Datumsbereichs>"],
+
+    }}
+
+# Grundregeln
+Durch Daten gestützte Punkte sollten ihre Datenreferenzen wie folgt aufführen:
+
+"Dies ist ein Beispielsatz, der durch mehrere Datenreferenzen gestützt wird [Daten: <Name des Datensatzes> (Datensatz-IDs), <Name des Datensatzes> (Datensatz-IDs)]."
+
+Führen Sie nicht mehr als 5 Datensatz-IDs in einer einzigen Referenz auf. Führen Sie stattdessen die 5 relevantesten Datensatz-IDs auf und fügen Sie "+mehr" hinzu, um anzuzeigen, dass es noch weitere gibt.
+Beispiel:
+"Person X hat ein großes Problem mit Projekt Y gelöst [Daten: Quellen (1, 5),  Datumsbereich ((2001, 05, 12), (2001, 05, 14))]. Außerdem hat er wichtige Aktualisierungen an der Datenbank der App Y vorgenommen [Daten: Berichte (2, 4), Quellen (7, 23, 2, 34, 46, +mehr), Datumsbereich ((2001, 05, 15), (2001, 05, 18))"
+
+wobei 1, 2, 4, 5, 7, 23, 2, 34 und 46 die ID (nicht den Index) des entsprechenden Datensatzes darstellen.
+
+Begrenzen Sie die Gesamtlänge des Berichts auf {max_report_length} Wörter.
+
+# Beispiel für eine Eingabe
+-----------
+QUELLEN
+ID, Text
+1, Text: Von: compliance.office@enron.com An: management.team@enron.com Cc: legal.team@enron.com, risk@enron.com Datum: Mi, 12. Juli 2000 08:30:00 -0600 (CST) Betreff: Kurzes Update zu Compliance- und Risikomaßnahmen
+2, Kurzes Update zu den aktuellen Entwicklungen im Bereich Compliance und Risikomanagement. Das Risikomanagement wird verstärkt – Seit Anfang dieses Jahres werden unsere Finanzrisikobewertungen und Risikominderungsstrategien verschärft.
+3, Diese Maßnahmen sind entscheidend, um unsere finanzielle Stabilität zu gewährleisten und die aktuellen Marktvorschriften von Mitte 2000 einzuhalten. Sie sind für unsere strategische Planung von entscheidender Bedeutung und helfen uns, unseren Vorsprung zu halten.
+5, Die Rechtsabteilung hält uns in Schach – Das Team für Rechtskonformität sorgt dafür, dass alle unsere Aktivitäten den gesetzlichen Standards entsprechen. Seit dem zweiten Quartal 2000 konzentriert es sich insbesondere auf die Verbesserung unserer Unternehmensführung und unseres Vertragsmanagements. Dies ist entscheidend für einen reibungslosen und rechtlich einwandfreien Ablauf unserer Aktivitäten.
+9, Zusammenarbeit – Seit Beginn des zweiten Quartals 2000 arbeiten die Bereiche Risikomanagement und Rechtskonformität besser denn je zusammen. Sie stellen sicher, dass unsere Strategien nicht nur effektiv sind, sondern auch vollständig konform. Diese Koordination ist für unseren integrierten Governance-Ansatz von entscheidender Bedeutung.
+10, Ihre Meinung? – Wie wirken sich diese Neuerungen auf Ihren Bereich aus? Haben Sie Ideen, wie wir uns verbessern können? Wenden Sie sich an Ihre Abteilungsleiter.
+11, Vielen Dank für Ihr Engagement. Lassen Sie uns weiterhin nach besseren und intelligenteren Arbeitsweisen streben. Viele Grüße, Jane Doe
+
+Ausgabe:
+
+{{
+    "title": "Enron Compliance und Risikomanagement – Überblick Stand Juli 2000",
+    "summary": "Dieser Bericht befasst sich mit den wichtigsten Abteilungen von Enron, die sich auf Compliance und Risikomanagement konzentrieren, und veranschaulicht, wie diese Einheiten innerhalb des organisatorischen Rahmens zusammenarbeiten, um regulatorische Standards einzuhalten und finanzielle Risiken effektiv zu managen. Die Informationen beziehen sich auf die Geschäftstätigkeit des Unternehmens um die Mitte des Jahres 2000.",
+    "rating": 9,2,
+    "rating_explanation": "Die hohe Bewertung spiegelt die entscheidende Rolle wider, die die Abteilungen Risikomanagement und Rechtskonformität bei der Einhaltung der finanziellen und rechtlichen Vorschriften von Enron spielen, die für die Aufrechterhaltung der Integrität und operativen Stabilität des Unternehmens von entscheidender Bedeutung sind.",
+       "findings": [
+        {{
+            "Zusammenfassung": "Operativer Umfang des Risikomanagements",
+            "Erläuterung": "Die Risikomanagementabteilung von Enron spielt eine zentrale Rolle bei der Identifizierung, Bewertung und Minderung finanzieller Risiken. Ihr proaktiver Ansatz, der seit Anfang 2000 verfolgt wird, trägt dazu bei, Enron vor potenziellen finanziellen Fallstricken zu schützen und die kontinuierliche Einhaltung der sich ständig weiterentwickelnden Marktvorschriften sicherzustellen. Ein effektives Risikomanagement verhindert nicht nur finanzielle Anomalien, sondern unterstützt auch die strategischen Entscheidungsprozesse des Unternehmens.
+
+[Daten: Quellen (2, 3), Datumsbereich ((2000, 01, 01), (2000, 07, 12))]"
+        }},
+        {{
+            "Zusammenfassung": "Einhaltung gesetzlicher Vorschriften und Unternehmensführung",
+            "Erläuterung": "Die Abteilung für Rechtskonformität stellt sicher, dass alle Aktivitäten von Enron den von den Aufsichtsbehörden festgelegten Rechtsstandards entsprechen. Ihr seit dem zweiten Quartal 2000 bekannter Fokus auf Corporate Governance und Vertragsmanagement ist entscheidend für die Aufrechterhaltung des guten Rufs und der rechtlichen Konformität von Enron, insbesondere bei der Verwaltung komplexer Verträge und Unternehmensvereinbarungen. Ihre Bemühungen unterstreichen das Engagement für die Einhaltung hoher Rechtsstandards und ethischer Praktiken.
+			
+			[Daten: Quelle (5), Datumsbereich ((2000, 04, 01), (2000, 07, 12))]"
+        }},
+        {{
+            "summary": "Abteilungsübergreifende Zusammenarbeit zur Einhaltung von Vorschriften",
+            "explanation": "Die im zweiten Quartal 2000 eingerichtete Zusammenarbeit zwischen den Abteilungen Risikomanagement und Rechtskonformität stellt sicher, dass Risikominderungsstrategien rechtlich einwandfrei sind und dass Compliance-Maßnahmen finanzielle Risiken berücksichtigen. Diese Synergie ist für eine ganzheitliche Unternehmensführung von entscheidender Bedeutung und hat maßgeblich zur Integration des Risikomanagements in die Strategien zur Einhaltung gesetzlicher Vorschriften bei Enron beigetragen. Die verstärkte abteilungsübergreifende Zusammenarbeit in diesem Zeitraum spielt eine entscheidende Rolle bei der Angleichung der Unternehmensstrategien an die regulatorischen Anforderungen.
+
+[Daten: Quellen (9), Datumsbereich ((2000, 04, 01), (2000, 07, 12))]"
+        }}
+    ],
+    "date_range": ["2000-01-01", "2000-07-12"]
+}}
+
+
+# Echte Daten
+
+Verwenden Sie den folgenden Text für Ihre Antwort. Erfinden Sie nichts in Ihrer Antwort.
+
+Text:
+{input_text}
+
+Ausgabe:

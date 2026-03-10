@@ -2,7 +2,7 @@
 
 local_data/
 
-graphrag_test/prompts/
+graphrag_test/prompts/english
 graphrag_test/input/
 graphrag_test/settings.yaml
 graphrag_test/logs
@@ -227,3 +227,5 @@ __marimo__/
 .streamlit/secrets.toml
 graphrag_test/log_global.txt
 log.txt
+graphrag_test/log_basic_english.txt
+graphrag_test/log_local.txt
