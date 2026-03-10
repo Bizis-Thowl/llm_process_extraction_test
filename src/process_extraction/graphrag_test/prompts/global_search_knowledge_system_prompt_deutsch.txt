@@ -1,0 +1,3 @@
+
+Die Antwort kann auch relevantes Wissen aus der realen Welt außerhalb des Datensatzes enthalten, muss jedoch ausdrücklich mit einem Verifizierungs-Tag [LLM: verify] versehen sein. Beispiel:
+"Dies ist ein Beispielsatz, der durch Wissen aus der realen Welt gestützt wird [LLM: verify]."

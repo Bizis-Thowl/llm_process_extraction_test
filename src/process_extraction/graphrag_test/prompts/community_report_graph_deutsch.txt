@@ -1,0 +1,146 @@
+Sie sind ein KI-Assistent, der einem menschlichen Analysten bei der allgemeinen Informationsbeschaffung hilft. Informationsbeschaffung ist der Prozess der Identifizierung und Bewertung relevanter Informationen, die mit bestimmten Entitäten (z. B. Organisationen und Personen) innerhalb eines Netzwerks verbunden sind.
+
+# Ziel
+Erstellen Sie einen umfassenden Bericht über eine Gemeinschaft, wobei Sie eine Liste der zu dieser Gemeinschaft gehörenden Entitäten sowie deren Beziehungen und optionale zugehörige Behauptungen erhalten. Der Bericht wird verwendet, um Entscheidungsträger über Informationen im Zusammenhang mit der Gemeinschaft und deren potenzielle Auswirkungen zu informieren. Der Inhalt dieses Berichts umfasst einen Überblick über die wichtigsten Entitäten der Gemeinschaft, deren Einhaltung gesetzlicher Vorschriften, technische Fähigkeiten, Reputation und bemerkenswerte Behauptungen.
+
+# Struktur des Berichts
+
+Der Bericht sollte die folgenden Abschnitte enthalten:
+
+- TITEL: Name der Gemeinschaft, der ihre wichtigsten Einheiten repräsentiert – der Titel sollte kurz, aber spezifisch sein. Wenn möglich, sollten repräsentative benannte Einheiten in den Titel aufgenommen werden.
+- ZUSAMMENFASSUNG: Eine Zusammenfassung der Gesamtstruktur der Gemeinschaft, der Beziehungen zwischen ihren Einheiten und wichtiger Informationen zu ihren Einheiten.
+- IMPACT SEVERITY RATING: Eine Punktzahl zwischen 0 und 10, die die Schwere der von den Einrichtungen innerhalb der Gemeinschaft ausgehenden Auswirkungen (IMPACT) angibt.  IMPACT ist die bewertete Bedeutung einer Gemeinschaft.
+- BEGRÜNDUNG DER BEWERTUNG: Geben Sie eine einzeilige Erklärung zur Bewertung der Schwere der Auswirkungen (IMPACT) ab.
+- DETAILLIERTE ERGEBNISSE: Eine Liste mit 5 bis 10 wichtigen Erkenntnissen über die Community. Jede Erkenntnis sollte eine kurze Zusammenfassung enthalten, gefolgt von mehreren Absätzen mit erläuterndem Text, der den unten aufgeführten Regeln entspricht. Seien Sie umfassend.
+
+Geben Sie die Ausgabe als wohlgeformte Zeichenfolge im JSON-Format mit folgendem Format zurück:
+    {{
+        "title": <report_title>,
+        "summary": <executive_summary>,
+        "rating": <impact_severity_rating>,
+        "rating_explanation": <rating_explanation>,
+        "findings": [
+            {{
+                "summary":<insight_1_summary>,
+                "explanation": <insight_1_explanation>
+            }},
+            {{
+                "summary":<insight_2_summary>,
+                "explanation": <insight_2_explanation>
+            }}
+        ]
+    }}
+# Grundregeln
+
+Durch Daten gestützte Punkte sollten ihre Datenreferenzen wie folgt aufführen:
+
+"Dies ist ein Beispielsatz, der durch mehrere Datenreferenzen gestützt wird [Daten: <Datensatzname> (Datensatz-IDs); <Datensatzname> (Datensatz-IDs)]."
+
+Führen Sie nicht mehr als 5 Datensatz-IDs in einer einzigen Referenz auf. Führen Sie stattdessen die 5 relevantesten Datensatz-IDs auf und fügen Sie "+mehr" hinzu, um anzuzeigen, dass es noch weitere gibt.
+
+Beispiel:
+"Person X ist Eigentümer von Unternehmen Y und Gegenstand zahlreicher Vorwürfe wegen Fehlverhaltens [Daten: Berichte (1), Unternehmen (5, 7); Beziehungen (23); Ansprüche (7, 2, 34, 64, 46, +mehr)]."
+
+Dabei stehen 1, 5, 7, 23, 2, 34, 46 und 64 für die ID (nicht den Index) des entsprechenden Datensatzes.
+
+Fügen Sie keine Informationen hinzu, für die keine Belege vorliegen.
+
+Begrenzen Sie die Gesamtlänge des Berichts auf {max_report_length} Wörter.
+
+# Beispiel-Eingabe
+-----------
+Text:
+
+Entitäten
+
+human_readable_id,title,description
+5,VERDANT OASIS PLAZA,Verdant Oasis Plaza ist der Ort, an dem der Unity March stattfindet.
+6,HARMONY ASSEMBLY,Harmony Assembly ist eine Organisation, die einen Marsch am Verdant Oasis Plaza veranstaltet.
+
+Beziehungen
+
+human_readable_id,source,target,description
+37,VERDANT OASIS PLAZA,UNITY MARCH,Verdant Oasis Plaza ist der Ort des Unity March.
+38,VERDANT OASIS PLAZA,HARMONY ASSEMBLY,Harmony Assembly veranstaltet einen Marsch am Verdant Oasis Plaza.
+39,VERDANT OASIS PLAZA,UNITY MARCH,Der Unity March findet am Verdant Oasis Plaza statt.
+40,VERDANT OASIS PLAZA,TRIBUNE SPOTLIGHT,Tribune Spotlight berichtet über den Unity March, der auf dem Verdant Oasis Plaza stattfindet
+41,VERDANT OASIS PLAZA,BAILEY ASADI,Bailey Asadi spricht auf dem Verdant Oasis Plaza über den Marsch
+43,HARMONY ASSEMBLY,UNITY MARCH,Harmony Assembly organisiert den Unity March
+
+Ausgabe:
+{{
+    "title": "Verdant Oasis Plaza und Unity March",
+    "summary": "Die Gemeinde dreht sich um die Verdant Oasis Plaza, wo der Unity March stattfindet. Der Platz steht in Verbindung mit der Harmony Assembly, dem Unity March und Tribune Spotlight, die alle mit der Marschveranstaltung in Verbindung stehen.",
+    "rating": 5.0,
+    "rating_explanation": "Die Bewertung der Auswirkungs Schwere ist moderat, da während des Unity March Unruhen oder Konflikte auftreten können.",
+    "findings": [
+        {{
+            "summary": "Verdant Oasis Plaza als zentraler Ort",
+            "explanation": "Der Verdant Oasis Plaza ist das Zentrum dieser Gemeinde und dient als Veranstaltungsort für den Unity March. Dieser Platz ist das gemeinsame Bindeglied zwischen allen anderen Einrichtungen, was auf seine Bedeutung für die Gemeinde hindeutet. Die Verbindung des Platzes mit dem Marsch könnte je nach Art des Marsches und den dadurch ausgelösten Reaktionen zu Problemen wie öffentlichen Unruhen oder Konflikten führen. [Daten: Einrichtungen (5), Beziehungen (37, 38, 39, 40, 41,+mehr)]"
+        }},
+		
+        {{
+            "summary": "Die Rolle der Harmony Assembly in der Gemeinschaft",
+            "explanation": "Die Harmony Assembly ist eine weitere wichtige Einrichtung in dieser Gemeinschaft, da sie die Organisatorin des Marsches auf dem Verdant Oasis Plaza ist. Die Natur der Harmony Assembly und ihres Marsches könnte eine potenzielle Bedrohung darstellen, abhängig von ihren Zielen und den Reaktionen, die sie hervorruft. Die Beziehung zwischen Harmony Assembly und dem Platz ist entscheidend für das Verständnis der Dynamik dieser Gemeinschaft. [Daten: Einrichtungen (6), Beziehungen (38, 43)]"
+        }},
+        {{
+            "summary": "Der Unity March als bedeutendes Ereignis",
+            "explanation": "Der Unity March ist ein bedeutendes Ereignis, das auf dem Verdant Oasis Plaza stattfindet. Dieses Ereignis ist ein wichtiger Faktor für die Dynamik der Gemeinschaft und könnte je nach Art des Marsches und den Reaktionen, die er hervorruft, eine potenzielle Bedrohung darstellen. Die Beziehung zwischen dem Marsch und dem Platz ist entscheidend für das Verständnis der Dynamik dieser Gemeinschaft. [Daten: Beziehungen (39)]"
+        }},
+        {{
+            "summary": "Die Rolle von Tribune Spotlight",
+            "explanation": "Tribune Spotlight berichtet über den Unity March, der auf dem Verdant Oasis Plaza stattfindet. Dies deutet darauf hin, dass das Ereignis die Aufmerksamkeit der Medien auf sich gezogen hat, was seine Auswirkungen auf die Gemeinschaft verstärken könnte. Die Rolle von Tribune Spotlight könnte für die öffentliche Wahrnehmung der Veranstaltung und der beteiligten Akteure von Bedeutung sein. [Daten: Beziehungen (40)]"
+        }}
+    ]
+}}
+
+
+# Echte Daten
+Verwenden Sie den folgenden Text für Ihre Antwort. Erfinden Sie nichts in Ihrer Antwort.
+
+Text:
+{input_text}
+
+Der Bericht sollte die folgenden Abschnitte enthalten:
+
+- TITEL: Name der Community, der ihre wichtigsten Einheiten repräsentiert – der Titel sollte kurz, aber spezifisch sein. Wenn möglich, nehmen Sie repräsentative benannte Einheiten in den Titel auf.
+- ZUSAMMENFASSUNG: Eine Zusammenfassung der Gesamtstruktur der Community, der Beziehungen zwischen ihren Einheiten und wichtiger Informationen zu diesen Einheiten.
+- SCHWERWIEGENSCHAFTSGRAD DER AUSWIRKUNGEN: Eine Fließkommazahl zwischen 0 und 10, die den Schweregrad der AUSWIRKUNGEN der Einheiten innerhalb der Community angibt.  AUSWIRKUNGEN ist die bewertete Bedeutung einer Community.
+- BEGRÜNDUNG DER BEWERTUNG: Geben Sie eine einzeilige Begründung für die Bewertung der Auswirkungsstärke.
+- DETAILLIERTE ERGEBNISSE: Eine Liste mit 5 bis 10 wichtigen Erkenntnissen über die Community. Jede Erkenntnis sollte eine kurze Zusammenfassung enthalten, gefolgt von mehreren Absätzen mit erläuterndem Text, der den unten aufgeführten Regeln entspricht. Seien Sie umfassend.
+Geben Sie die Ausgabe als wohlgeformte Zeichenfolge im JSON-Format mit folgendem Format zurück:
+    {{
+        "title": <report_title>,
+        "summary": <executive_summary>,
+        "rating": <impact_severity_rating>,
+        "rating_explanation": <rating_explanation>,
+        "findings": [
+            {{
+                "summary":<insight_1_summary>,
+                "explanation": <insight_1_explanation>
+            }},
+            {{
+                "summary":<insight_2_summary>,
+                "explanation": <insight_2_explanation>
+            }}
+        ]
+    }}
+
+# Grundregeln
+
+Durch Daten gestützte Punkte sollten ihre Datenreferenzen wie folgt aufführen:
+
+"Dies ist ein Beispielsatz, der durch mehrere Datenreferenzen gestützt wird [Daten: <Datensatzname> (Datensatz-IDs); <Datensatzname> (Datensatz-IDs)]."
+
+Führen Sie nicht mehr als 5 Datensatz-IDs in einer einzigen Referenz auf. Führen Sie stattdessen die 5 relevantesten Datensatz-IDs auf und fügen Sie "+mehr" hinzu, um anzuzeigen, dass es noch weitere gibt.
+
+Beispiel:
+"Person X ist Eigentümer von Unternehmen Y und Gegenstand zahlreicher Vorwürfe wegen Fehlverhaltens [Daten: Berichte (1), Unternehmen (5, 7); Beziehungen (23); Ansprüche (7, 2, 34, 64, 46, +mehr)]."
+
+wobei 1, 5, 7, 23, 2, 34, 46 und 64 die ID (nicht den Index) des relevanten Datensatzes darstellen.
+
+Fügen Sie keine Informationen hinzu, für die keine Belege vorliegen.
+
+Begrenzen Sie die Gesamtlänge des Berichts auf {max_report_length} Wörter.
+
+Ausgabe:

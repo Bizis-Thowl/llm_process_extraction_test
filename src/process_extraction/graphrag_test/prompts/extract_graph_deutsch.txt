@@ -1,0 +1,120 @@
+-Ziel-
+Identifizieren Sie anhand eines Textdokuments, das für diese Aktivität potenziell relevant ist, und einer Liste von Entitätstypen alle Entitäten dieser Typen aus dem Text sowie alle Beziehungen zwischen den identifizierten Entitäten.
+ 
+-Schritte-
+1. Identifizieren Sie alle Entitäten. Extrahieren Sie für jede identifizierte Entität die folgenden Informationen:
+- entity_name: Name der Entität, großgeschrieben
+- entity_type: Einer der folgenden Typen: [{entity_types}]
+- entity_description: Umfassende Beschreibung der Attribute und Aktivitäten der Entität
+Formatieren Sie jede Entität als ("entity"<|><entity_name><|><entity_type><|><entity_description>)
+ 
+2. Identifizieren Sie aus den in Schritt 1 identifizierten Entitäten alle Paare von (source_entity, target_entity), die *eindeutig miteinander in Beziehung stehen*.
+Extrahieren Sie für jedes Paar verwandter Entitäten die folgenden Informationen:
+- source_entity: Name der Quellentität, wie in Schritt 1 identifiziert
+- target_entity: Name der Zielentität, wie in Schritt 1 identifiziert
+- relationship_description: Erklärung, warum Sie glauben, dass die Quellentität und die Zielentität miteinander in Beziehung stehen
+- relationship_strength: eine numerische Bewertung, die die Stärke der Beziehung zwischen der Quellentität und der Zielentität angibt
+ Formatieren Sie jede Beziehung als ("relationship"<|><source_entity><|><target_entity><|><relationship_description><|><relationship_strength>)
+ 
+3. Geben Sie die Ausgabe in Englisch als eine einzige Liste aller in Schritt 1 und 2 identifizierten Entitäten und Beziehungen zurück. Verwenden Sie **##** als Trennzeichen für die Liste.
+4. Nach Abschluss geben Sie <|COMPLETE|> aus.
+ 
+######################
+-Beispiele-
+######################
+Beispiel 1:
+Entity_types: ORGANIZATION, PERSON
+Text:
+Die Zentralbank von Verdantis wird am Montag und Donnerstag tagen und plant, ihre neueste geldpolitische Entscheidung am Donnerstag um 13:30 Uhr PDT bekannt zu geben, gefolgt von einer Pressekonferenz, bei der der Vorsitzende der Zentralbank, Martin Smith, Fragen beantworten wird. Investoren erwarten, dass der Marktstrategiemaßnahmenausschuss den Leitzins in einer Spanne von 3,5 % bis 3,75 % unverändert lassen wird.
+######################
+Ausgabe:
+("entity"<|>ZENTRALE INSTITUTION<|>ORGANISATION<|>Die Zentrale Institution ist die Federal Reserve von Verdantis, die montags und donnerstags die Zinssätze festlegt)
+##
+("entity"<|>MARTIN SMITH<|>PERSON<|>Martin Smith ist der Vorsitzende der Zentralinstitution)
+##
+("entity"<|>MARKTSTRATEGIEKOMITEE<|>ORGANISATION<|>Das Komitee der Zentralinstitution trifft wichtige Entscheidungen über die Zinssätze und das Wachstum der Geldmenge in Verdantis)
+##
+("relationship"<|>MARTIN SMITH<|>ZENTRALE INSTITUTION<|>Martin Smith ist Vorsitzender der Zentralen Institution und wird auf einer Pressekonferenz Fragen beantworten<|>9)
+<|COMPLETE|>
+
+######################
+Beispiel 2:
+Entity_types: ORGANIZATION
+Text:
+Die Aktie von TechGlobal (TG) schoss am Donnerstag, ihrem ersten Handelstag an der Global Exchange, in die Höhe. IPO-Experten warnen jedoch davor, dass der Börsengang des Halbleiterunternehmens keinen Rückschluss auf die Entwicklung anderer neu notierter Unternehmen zulässt.
+
+TechGlobal, ein ehemals börsennotiertes Unternehmen, wurde 2014 von Vision Holdings privatisiert. Der etablierte Chip-Designer gibt an, dass 85 % aller Premium-Smartphones mit seinen Chips ausgestattet sind.
+######################
+Ausgabe:
+("entity"<|>TECHGLOBAL<|>ORGANISATION<|>TechGlobal ist eine Aktie, die jetzt an der Global Exchange notiert ist und 85 % der Premium-Smartphones mit Technologie versorgt)
+##
+("entity"<|>VISION HOLDINGS<|>ORGANISATION<|>Vision Holdings ist ein Unternehmen, das zuvor TechGlobal gehörte)
+##
+("relationship"<|>TECHGLOBAL<|>VISION HOLDINGS<|>Vision Holdings war von 2014 bis heute Eigentümer von TechGlobal<|>5)
+<|COMPLETE|>
+
+######################
+Beispiel 3:
+Entity_types: ORGANIZATION,GEO,PERSON
+Text:
+Fünf Aurelier, die in Firuzabad zu acht Jahren Haft verurteilt wurden und weithin als Geiseln gelten, sind auf dem Weg nach Hause nach Aurelia.
+
+Der von Quintara orchestrierte Austausch wurde abgeschlossen, als 8 Milliarden Dollar aus Firuzi-Geldern an Finanzinstitute in Krohaara, der Hauptstadt von Quintara, überwiesen wurden.
+
+Der Austausch, der in Firuzabads Hauptstadt Tiruzia initiiert wurde, führte dazu, dass die vier Männer und eine Frau, die ebenfalls firuzische Staatsangehörige sind, einen Charterflug nach Krohaara bestiegen.
+
+Sie wurden von hochrangigen aurelischen Beamten empfangen und sind nun auf dem Weg in die Hauptstadt Aurelias, Cashion.
+
+Zu den Aurelianern gehören der 39-jährige Geschäftsmann Samuel Namara, der im Alhamia-Gefängnis in Tiruzia inhaftiert war, sowie der 59-jährige Journalist Durke Bataglani und die 53-jährige Umweltschützerin Meggie Tazbah, die auch die Staatsangehörigkeit von Bratinas besitzt.
+
+######################
+Ausgabe:
+("entity"<|>FIRUZABAD<|>GEO<|>Firuzabad hielt Aurelianer als Geiseln fest)
+##
+("entity"<|>AURELIA<|>GEO<|>Land, das die Freilassung der Geiseln anstrebt)
+##
+("entity"<|>QUINTARA<|>GEO<|>Land, das einen Austausch von Geld gegen Geiseln aushandelte)
+##
+##
+("entity"<|>TIRUZIA<|>GEO<|>Hauptstadt von Firuzabad, wo die Aurelianer festgehalten wurden)
+##
+("entity"<|>KROHAARA<|>GEO<|>Hauptstadt von Quintara)
+##
+("entity"<|>CASHION<|>GEO<|>Hauptstadt von Aurelia)
+##
+("entity"<|>SAMUEL NAMARA<|>PERSON<|>Aurelianer, der Zeit im Alhamia-Gefängnis in Tiruzia verbrachte)
+##
+("entity"<|>ALHAMIA-GEFÄNGNIS<|>GEO<|>Gefängnis in Tiruzia)
+##
+("entity"<|>DURKE BATAGLANI<|>PERSON<|>Aurelianischer Journalist, der als Geisel gehalten wurde)
+##
+("entity"<|>MEGGIE TAZBAH<|>PERSON<|>Bratinische Staatsbürgerin und Umweltschützerin, die als Geisel gehalten wurde)
+##
+("relationship"<|>FIRUZABAD<|>AURELIA<|>Firuzabad verhandelte einen Geiselaustausch mit Aurelia<|>2)
+##
+("relationship"<|>QUINTARA<|>AURELIA<|>Quintara vermittelte den Geiselaustausch zwischen Firuzabad und Aurelia<|>2)
+##
+("relationship"<|>QUINTARA<|>FIRUZABAD<|>Quintara vermittelte den Geiselaustausch zwischen Firuzabad und Aurelia<|>2)
+##
+("relationship"<|>SAMUEL NAMARA<|>ALHAMIA-GEFÄNGNIS<|>Samuel Namara war Häftling im Alhamia-Gefängnis<|>8)
+##
+("relationship"<|>SAMUEL NAMARA<|>MEGGIE TAZBAH<|>Samuel Namara und Meggie Tazbah wurden im Rahmen derselben Geiselbefreiung ausgetauscht<|>2)
+##
+("relationship"<|>SAMUEL NAMARA<|>DURKE BATAGLANI<|>Samuel Namara und Durke Bataglani wurden im Rahmen derselben Geiselbefreiung ausgetauscht<|>2)
+##
+("relationship"<|>MEGGIE TAZBAH<|>DURKE BATAGLANI<|>Meggie Tazbah und Durke Bataglani wurden im Rahmen derselben Geiselbefreiung ausgetauscht<|>2)
+##
+("relationship"<|>SAMUEL NAMARA<|>FIRUZABAD<|>Samuel Namara war eine Geisel in Firuzabad<|>2)
+##
+("relationship"<|>MEGGIE TAZBAH<|>FIRUZABAD<|>Meggie Tazbah war eine Geisel in Firuzabad<|>2)
+##
+("relationship"<|>DURKE BATAGLANI<|>FIRUZABAD<|>Durke Bataglani war eine Geisel in Firuzabad<|>2)
+<|COMPLETE|>
+
+######################
+-Echte Daten-
+######################
+Entity_types: {entity_types}
+Text: {input_text}
+######################
+Ausgabe:

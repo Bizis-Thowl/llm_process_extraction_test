@@ -1,0 +1,52 @@
+-Zielaktivität-
+Sie sind ein intelligenter Assistent, der einem menschlichen Analysten dabei hilft, Behauptungen gegenüber bestimmten Entitäten zu analysieren, die in einem Textdokument enthalten sind.
+
+-Ziel-
+Extrahieren Sie aus einem Textdokument, das für diese Aktivität potenziell relevant ist, einer Entitätsspezifikation und einer Behauptungsbeschreibung alle Entitäten, die der Entitätsspezifikation entsprechen, sowie alle Behauptungen gegenüber diesen Entitäten.
+
+-Schritte-
+1. Extrahieren Sie alle benannten Entitäten, die der vordefinierten Entitätsspezifikation entsprechen. Die Entitätsspezifikation kann entweder eine Liste von Entitätsnamen oder eine Liste von Entitätstypen sein.
+2. Extrahieren Sie für jede in Schritt 1 identifizierte Entität alle mit der Entität verbundenen Behauptungen. Die Behauptungen müssen der angegebenen Behauptungsbeschreibung entsprechen, und die Entität sollte Gegenstand der Behauptung sein.
+Extrahieren Sie für jede Behauptung die folgenden Informationen:
+- Subjekt: Name der Entität, die Gegenstand der Behauptung ist, in Großbuchstaben. Die Subjekt-Entität ist diejenige, die die in der Behauptung beschriebene Handlung begangen hat. Das Subjekt muss eine der in Schritt 1 identifizierten benannten Entitäten sein.
+- Objekt: Name der Entität, die Gegenstand der Behauptung ist, in Großbuchstaben. Die Objekt-Entität ist diejenige, die entweder die in der Behauptung beschriebene Handlung meldet/ausführt oder von ihr betroffen ist. Wenn die Objekt-Entität unbekannt ist, verwenden Sie **NONE**.
+- Behauptungstyp: Gesamtkategorie der Behauptung, in Großbuchstaben. Benennen Sie ihn so, dass er in mehreren Texteingaben wiederholt werden kann, damit ähnliche Behauptungen denselben Behauptungstyp haben.
+- Status der Behauptung: **TRUE**, **FALSE** oder **SUSPECTED**. TRUE bedeutet, dass die Behauptung bestätigt ist, FALSE bedeutet, dass die Behauptung als falsch befunden wurde, SUSPECTED bedeutet, dass die Behauptung nicht verifiziert wurde.
+- Beschreibung der Behauptung: Detaillierte Beschreibung, in der die Gründe für die Behauptung erläutert werden, zusammen mit allen zugehörigen Beweisen und Referenzen.
+- Datum der Behauptung: Zeitraum (start_date, end_date), in dem die Behauptung aufgestellt wurde. Sowohl start_date als auch end_date sollten im ISO-8601-Format angegeben werden. Wenn die Behauptung an einem einzigen Datum und nicht in einem Zeitraum aufgestellt wurde, geben Sie für start_date und end_date dasselbe Datum an. Wenn das Datum unbekannt ist, geben Sie **NONE** zurück.
+- Textquelle der Behauptung: Liste **aller** Zitate aus dem Originaltext, die für die Behauptung relevant sind.
+
+Formatieren Sie jede Behauptung wie folgt: (<subject_entity><|><object_entity><|><claim_type><|><claim_status><|><claim_start_date><|><claim_end_date><|><claim_description><|><claim_source>)
+
+3. Geben Sie die Ausgabe in englischer Sprache als eine einzige Liste aller in den Schritten 1 und 2 identifizierten Behauptungen zurück. Verwenden Sie **##** als Trennzeichen für die Liste.
+
+4. Wenn Sie fertig sind, geben Sie <|COMPLETE|> aus.
+
+-Beispiele-
+Beispiel 1:
+Entitätsspezifikation: Organisation
+Beschreibung der Behauptung: Warnsignale im Zusammenhang mit einer Entität
+Text: Laut einem Artikel vom 10.01.2022 wurde Unternehmen A wegen Angebotsabsprachen bei mehreren öffentlichen Ausschreibungen der Regierungsbehörde B mit einer Geldstrafe belegt. Das Unternehmen gehört Person C, die 2015 der Korruption verdächtigt wurde.
+Ausgabe:
+
+(UNTERNEHMEN A<|>BEHÖRDE B<|>WETTBEWERBSVERZERRENDE PRAKTIKEN<|>WAHR<|>2022-01-10T00:00:00<|>2022-01-10T00:00: 00<|>Unternehmen A wurde wegen wettbewerbswidriger Praktiken belangt, da es laut einem am 10.01.2022 veröffentlichten Artikel wegen Angebotsabsprachen bei mehreren öffentlichen Ausschreibungen der Behörde B mit einer Geldstrafe belegt wurde.<|>Laut einem am 10.01.2022 veröffentlichten Artikel wurde Unternehmen A wegen Angebotsabsprachen bei mehreren öffentlichen Ausschreibungen der Behörde B mit einer Geldstrafe belegt.)
+<|COMPLETE|>
+
+Beispiel 2:
+Angaben zum Unternehmen: Unternehmen A, Person C
+Beschreibung der Behauptung: Warnsignale im Zusammenhang mit einem Unternehmen
+Text: Laut einem Artikel vom 10.01.2022 wurde Unternehmen A wegen Angebotsabsprachen bei mehreren öffentlichen Ausschreibungen der Regierungsbehörde B mit einer Geldstrafe belegt. Das Unternehmen gehört Person C, die 2015 der Korruption verdächtigt wurde.
+Ausgabe:
+
+(UNTERNEHMEN A<|>BEHÖRDE B<|>WETTBEWERBSVERZERRENDE PRAKTIKEN<|>WAHR<|>10.01.2022T00:00:00<|>10.01.2022T00:00: 00<|>Das Unternehmen A wurde wegen wettbewerbswidriger Praktiken belangt, da es laut einem am 10.01.2022 veröffentlichten Artikel wegen Angebotsabsprachen bei mehreren öffentlichen Ausschreibungen der Regierungsbehörde B mit einer Geldstrafe belegt wurde<|>Laut einem am 10.01.2022 veröffentlichten Artikel wurde das Unternehmen A wegen Angebotsabsprachen bei mehreren öffentlichen Ausschreibungen der Regierungsbehörde B mit einer Geldstrafe belegt.)
+##
+
+(PERSON C<|>KEINE<|>KORRUPTION<|>VERDACHT<|>2015-01-01T00:00:00<|>2015-12-30T00:00: 00<|>Person C wurde 2015 der Beteiligung an korrupten Aktivitäten verdächtigt<|>Das Unternehmen gehört Person C, die 2015 der Beteiligung an korrupten Aktivitäten verdächtigt wurde)
+<|COMPLETE|>
+
+-Echte Daten-
+Verwenden Sie die folgenden Eingaben für Ihre Antwort.
+Entity specification: {entity_specs}
+Claim description: {claim_description}
+Text: {input_text}
+Output:

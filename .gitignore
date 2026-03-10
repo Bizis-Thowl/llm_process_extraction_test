@@ -2,12 +2,12 @@
 
 local_data/
 
-graphrag_test/prompts/
-graphrag_test/input/
-graphrag_test/settings.yaml
-graphrag_test/logs
-graphrag_test/output
-graphrag_test/cache
+#src/process_extraction/graphrag_test/prompts/
+src/process_extraction/graphrag_test/input/
+#src/process_extraction/graphrag_test/settings.yaml
+src/process_extraction/graphrag_test/logs
+src/process_extraction/graphrag_test/output
+src/process_extraction/graphrag_test/cache
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
