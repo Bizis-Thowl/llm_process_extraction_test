@@ -227,3 +227,5 @@ __marimo__/
 .streamlit/secrets.toml
 graphrag_test/log_global.txt
 log.txt
+graphrag_test/log_basic_english.txt
+graphrag_test/log_local.txt
