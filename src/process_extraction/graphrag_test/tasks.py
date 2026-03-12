@@ -49,15 +49,9 @@ def task_global(input: Dict[str, Any]):
 
 def task_basic(input: Dict[str, Any]):
     user_request = input["user_request"]
-    final_answer, context = asyncio.run(api.local_search(
+    final_answer, context = asyncio.run(api.basic_search(
             config=graphrag_config,
-            entities=entities,
-            communities=communities,
-            community_reports=community_reports,
             text_units= text_unit_df,
-            relationships= relationships,
-            covariates = None,
-            community_level=2,
             response_type="Kurze präzise Antwort auf Deutsch",
             query=user_request
         ))
@@ -65,14 +59,13 @@ def task_basic(input: Dict[str, Any]):
 
 def task_drift(input: Dict[str, Any]):
     user_request = input["user_request"]
-    final_answer, context = asyncio.run(api.local_search(
+    final_answer, context = asyncio.run(api.drift_search(
             config=graphrag_config,
             entities=entities,
             communities=communities,
             community_reports=community_reports,
             text_units= text_unit_df,
             relationships= relationships,
-            covariates = None,
             community_level=2,
             response_type="Kurze präzise Antwort auf Deutsch",
             query=user_request

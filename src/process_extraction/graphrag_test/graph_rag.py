@@ -118,10 +118,10 @@ if __name__ == "__main__":
     # Variables to change for the experiment runs
     loc_qa_dataset = 'Fragen_Antworten_Dienstreise.csv'
     dataset_name = "graphrag_evaluation"
-    exp_name = "qwen3-8b-40k" # old: test-experiment
+    exp_name = "Qwen3-30B-A3B-Instruct" # old: test-experiment, qwen3-8b-40k
     exp_description = "This experiment is used to evaluate the GraphRAG approach for the model "+exp_name
     task_used = task_local
-    tasks = [task_local,task_global,task_basic,task_drift]
+    tasks = [task_local,task_global,task_basic] # task_drift (drift_search) has a far to high runtime and because of this, it gets excluded.
     runs = 5
 
     # Run the experiments with the given variables

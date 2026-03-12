@@ -6,11 +6,11 @@
 
 completion_models:
   default_completion_model:
-    model_provider: ollama
-    model: qwen3_8b_40k
+    model_provider: openai #vllm #ollama
+    model: Qwen3-30B-A3B-Instruct #qwen3_8b_40k
     auth_method: api_key # or azure_managed_identity
     api_key: ${GRAPHRAG_API_KEY} # set this in the generated .env file, or remove if managed identity
-    api_base: http://hal9000.skim.th-owl.de:11976
+    api_base: http://hal9000.skim.th-owl.de:11877/v1
     retry:
       type: exponential_backoff
 
