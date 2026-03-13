@@ -20,11 +20,14 @@ tracer = init_phoenix("llm-process-extraction-graphrag")
 graphrag_config = load_config(os.getenv("PROJECT_DIRECTORY"))
 PROJECT_DIRECTORY = os.getenv("PROJECT_DIRECTORY")
 
-entities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/entities.parquet")
-communities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/communities.parquet")
-text_unit_df = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/text_units.parquet")
-relationships = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/relationships.parquet")
-community_reports = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/community_reports.parquet")
+try:
+    entities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/entities.parquet")
+    communities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/communities.parquet")
+    text_unit_df = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/text_units.parquet")
+    relationships = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/relationships.parquet")
+    community_reports = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/community_reports.parquet")
+except:
+    print("Warning: The graph data could not be read. You first have to index the graph!")
 
 async def run_queries(df_qa):
     # Retrieve Questions and Answers
@@ -71,12 +74,6 @@ async def experiment(dataset_name, loc_qa_dataset, exp_name, exp_description, ta
     dataset_df = pd.DataFrame(df_qa)
 
     # Create the dataset, that is used for the 
-
-    px_dataset = px_client.datasets.get_dataset(dataset=dataset_name)
-    if px_dataset == None:
-        px_dataset = px_client.datasets.create_dataset(
-            dataframe=dataset_df, name=dataset_name, input_keys=["user_request", "process_data", "ground_truth"]
-        )
     
     try:
         px_dataset = px_client.datasets.get_dataset(dataset=dataset_name)
@@ -84,7 +81,7 @@ async def experiment(dataset_name, loc_qa_dataset, exp_name, exp_description, ta
         print(f"Dataset does not yet exist: {e}")
         print("Creating dataset.")
         px_dataset = px_client.datasets.create_dataset(
-            dataframe=dataset_df, name=dataset_name, input_keys=["user_request", "process_data", "ground_truth"]
+            dataframe=dataset_df, name=dataset_name, input_keys=["user_request", "ground_truth"]
         )
         
     
@@ -98,8 +95,8 @@ async def experiment(dataset_name, loc_qa_dataset, exp_name, exp_description, ta
         concurrency=8
     )
 
-def index_graph():
-    index_result : list[PipelineRunResult] = api.build_index(
+async def index_graph():
+    index_result : list[PipelineRunResult] = await api.build_index(
         config=graphrag_config,)
     # index_result is a list of workflows that make up the indexing pipeline that was run
     for workflow_result in index_result:
@@ -117,14 +114,14 @@ def run_graphrag_experiments(runs, tasks, loc_qa_dataset,dataset_name,exp_name,e
 if __name__ == "__main__":
     # Variables to change for the experiment runs
     loc_qa_dataset = 'Fragen_Antworten_Dienstreise.csv'
-    dataset_name = "graphrag_evaluation"
-    exp_name = "Qwen3-30B-A3B-Instruct" # old: test-experiment, qwen3-8b-40k
-    exp_description = "This experiment is used to evaluate the GraphRAG approach for the model "+exp_name
+    dataset_name = "graphrag_evaluation_v2"
+    exp_name = "qwen3-8b-40k" # old: test-experiment, qwen3-8b-40k, Qwen3-30B-A3B-Instruct
+    exp_description = "This experiment is used to evaluate the GraphRAG approach for the model "+exp_name+". This graph was created with the help of Qwen3-30B-A3B-Instruct."
     task_used = task_local
-    tasks = [task_local,task_global,task_basic] # task_drift (drift_search) has a far to high runtime and because of this, it gets excluded.
+    tasks = [task_basic] #task_local,task_global, # task_drift (drift_search) has a far to high runtime and because of this, it gets excluded.
     runs = 5
 
     # Run the experiments with the given variables
     run_graphrag_experiments(runs,tasks,loc_qa_dataset,dataset_name,exp_name,exp_description)
-    
+    #asyncio.run(index_graph())
     #asyncio.run(experiment(dataset_name,loc_qa_dataset,exp_name,exp_description,task_used))
