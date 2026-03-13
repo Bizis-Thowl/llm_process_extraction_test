@@ -1,25 +1,34 @@
 import os
-
-import asyncio
+#TODO: Delete unused imports
+#import asyncio
 
 import graphrag.api as api
-import pandas as pd
+#import pandas as pd
 from graphrag.config.load_config import load_config
 from graphrag.index.typing.pipeline_run_result import PipelineRunResult
 #from typing import Dict, Any
 
-from phoenix.client import Client
-from phoenix.experiments import run_experiment
-from process_extraction.experimentation.evaluators.correctness import correctness
+#from phoenix.client import Client
+#from phoenix.experiments import run_experiment
+#from process_extraction.experimentation.evaluators.correctness import correctness
 from process_extraction.init_phoenix import init_phoenix
 
-from process_extraction.graphrag_test.tasks import task_basic,task_drift,task_global,task_local
+
+from process_extraction.standardized_test.test import RAGTest
+from process_extraction.graphrag_test.tasks import task_basic,task_global,task_local #task_drift,
 
 tracer = init_phoenix("llm-process-extraction-graphrag")
 
 graphrag_config = load_config(os.getenv("PROJECT_DIRECTORY"))
 PROJECT_DIRECTORY = os.getenv("PROJECT_DIRECTORY")
 
+
+
+#
+# All of the commented out methods are now in different modules
+# TODO: Delete methods if nothing breaks in the near future
+#
+"""
 try:
     entities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/entities.parquet")
     communities = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/communities.parquet")
@@ -28,6 +37,11 @@ try:
     community_reports = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/community_reports.parquet")
 except:
     print("Warning: The graph data could not be read. You first have to index the graph!")
+"""
+
+"""
+
+Seems too not be used:
 
 async def run_queries(df_qa):
     # Retrieve Questions and Answers
@@ -64,9 +78,9 @@ async def run_queries(df_qa):
         })
     
     return df_graphrag
+"""
 
-
-
+"""
 async def experiment(dataset_name, loc_qa_dataset, exp_name, exp_description, task_used):
     px_client = Client()
     df_qa = pd.read_csv(loc_qa_dataset, sep =";")
@@ -83,7 +97,7 @@ async def experiment(dataset_name, loc_qa_dataset, exp_name, exp_description, ta
         px_dataset = px_client.datasets.create_dataset(
             dataframe=dataset_df, name=dataset_name, input_keys=["user_request", "ground_truth"]
         )
-        
+     
     
     run_experiment(
         px_dataset,
@@ -94,6 +108,8 @@ async def experiment(dataset_name, loc_qa_dataset, exp_name, exp_description, ta
         experiment_description=exp_description,
         concurrency=8
     )
+"""
+    
 
 async def index_graph():
     index_result : list[PipelineRunResult] = await api.build_index(
@@ -103,12 +119,15 @@ async def index_graph():
         status = f"error\n{workflow_result.error}" if workflow_result.error else "success"
         print(f"Workflow Name: {workflow_result.workflow}\tStatus: {status}")
 
+"""
 def run_graphrag_experiments(runs, tasks, loc_qa_dataset,dataset_name,exp_name,exp_description):
     # Method that runs the experiment-method x (runs) times for every task-method it was given 
     for item in tasks:
         exp_name_full = exp_name+"-"+item.__name__
         for i in range(runs):
             asyncio.run(experiment(dataset_name,loc_qa_dataset,exp_name_full,exp_description,item))
+"""
+
 
 
 if __name__ == "__main__":
@@ -116,12 +135,15 @@ if __name__ == "__main__":
     loc_qa_dataset = 'Fragen_Antworten_Dienstreise.csv'
     dataset_name = "graphrag_evaluation_v2"
     exp_name = "qwen3-8b-40k" # old: test-experiment, qwen3-8b-40k, Qwen3-30B-A3B-Instruct
-    exp_description = "This experiment is used to evaluate the GraphRAG approach for the model "+exp_name+". This graph was created with the help of Qwen3-30B-A3B-Instruct."
+    #exp_description = "This experiment is used to evaluate the GraphRAG approach for the model "+exp_name+". This graph was created with the help of Qwen3-30B-A3B-Instruct."
+    exp_description = "This experiment verifies that the standardized test module works"
     task_used = task_local
-    tasks = [task_basic] #task_local,task_global, # task_drift (drift_search) has a far to high runtime and because of this, it gets excluded.
-    runs = 5
+    tasks = [task_local,task_global,task_basic] # # task_drift (drift_search) has a far to high runtime and because of this, it gets excluded.
+    runs = 1
 
     # Run the experiments with the given variables
-    run_graphrag_experiments(runs,tasks,loc_qa_dataset,dataset_name,exp_name,exp_description)
+    RAGTest.run_rag_experiments(runs,tasks,loc_qa_dataset,dataset_name,exp_name,exp_description)
+
+    
     #asyncio.run(index_graph())
     #asyncio.run(experiment(dataset_name,loc_qa_dataset,exp_name,exp_description,task_used))

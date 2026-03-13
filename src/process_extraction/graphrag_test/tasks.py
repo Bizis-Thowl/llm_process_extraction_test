@@ -15,7 +15,7 @@ try:
     text_unit_df = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/text_units.parquet")
     relationships = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/relationships.parquet")
     community_reports = pd.read_parquet(f"{PROJECT_DIRECTORY}/output/community_reports.parquet")
-except:
+except Exception:
     print("Warning: The graph data could not be read. You first have to index the graph!")
 
 # Set of methods that define the four different approaches in GraphRAG as tasks for the arize-phoenix pipeline
