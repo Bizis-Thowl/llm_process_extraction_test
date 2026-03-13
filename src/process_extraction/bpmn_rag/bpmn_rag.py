@@ -43,6 +43,8 @@ class BpmnRag:
     
 if __name__ == "__main__":
     print("")
+    bpmn_rag = BpmnRag
+    bpmn_rag.search_docs()
 
     
 
