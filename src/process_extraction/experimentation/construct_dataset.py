@@ -3,7 +3,7 @@ import os
 
 def construct_dataset():
     data_dir = os.path.join("src", "process_extraction", "local_data")
-    requests = pd.read_csv(os.path.join(data_dir, "requests.csv"), header=0)
+    requests = pd.read_csv(os.path.join(data_dir, "requests.csv"), sep=";", header=0)
     
     dataset = []
     

@@ -11,7 +11,7 @@ QA_MESSAGES_PROMPT = """
     BPMN-Modell „Explain“, serialisiert in XML:
     {explain_str}
 
-    Frage, die mitheilfe des BPMN-Modells beantwortet werden soll:
+    Frage, die mithilfe des BPMN-Modells beantwortet werden soll:
     {query_str}
 
     """
@@ -24,7 +24,7 @@ QA_REFINE_PROMPT = """
     BPMN-Modell „Explain“, serialisiert in XML:
     {explain_str}
 
-    Frage, die mitheilfe des BPMN-Modells beantwortet werden soll:
+    Frage, die mithilfe des BPMN-Modells beantwortet werden soll:
     {query_str}
     
     Ursprüngliche Antwort auf die Frage über das BPMN-Modell „Explain“: {existing_answer}
