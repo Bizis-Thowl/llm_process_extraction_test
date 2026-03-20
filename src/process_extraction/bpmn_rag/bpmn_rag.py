@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 import instructor
+import pickle
 
 import pandas as pd
 import numpy as np
@@ -93,6 +94,25 @@ class BpmnRag:
                 span.set_status(StatusCode.OK)
                 prompt = self.refine_prompt(context,search_res,user_query,response)
         return response
+    
+    def open_embedding(self, token_limit):
+        df = pd.DataFrame()
+        df["text"]=''
+        files = os.listdir(os.getenv("DATA_DIRECTORY")+"bpmns")
+        data_dump = os.listdir(os.getenv("DATA_DIRECTORY")+"data_dump")
+        file = open(os.getenv("DATA_DIRECTORY")+'embedding_dump.txt', 'wb')
+        text = ['']
+
+        for filename in files:
+            text.append(open(os.getenv("DATA_DIRECTORY")+"bpmn_data.txt").read())
+        df["text"]= text
+        if len(data_dump)==0:
+            df_text = bpmn_rag.create_embedding(df_text=df,token_limit=token_limit)
+        else:
+            df_text = pickle.load(file, 'rb')
+        pickle.dump(df_text, file)
+        file.close()
+        return df_text
 
 
 # Parameters for a run
@@ -100,13 +120,9 @@ token_limit = 40000
 bpmn_rag = BpmnRag()
 tracer = init_phoenix("bpmn_rag")
 response_model = ProcessResponse
-context = open(os.getenv("DATA_DIRECTORY")+"context.txt").read()
+context = open(os.getenv("DATA_DIRECTORY")+"bpmns/case_base/case_3-7.txt").read()
 
-text = open(os.getenv("DATA_DIRECTORY")+"bpmn_data.txt").read()
-df = pd.DataFrame()
-df["text"] = [text]
-
-df_text = bpmn_rag.create_embedding(df_text=df,token_limit=token_limit)
+df_text = bpmn_rag.open_embedding(token_limit)
 
 top_n = 4
 
