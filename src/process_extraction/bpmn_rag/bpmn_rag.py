@@ -100,7 +100,7 @@ class BpmnRag:
         df["text"]=''
         files = os.listdir(os.getenv("DATA_DIRECTORY")+"bpmns")
         data_dump = os.listdir(os.getenv("DATA_DIRECTORY")+"data_dump")
-        file = open(os.getenv("DATA_DIRECTORY")+'embedding_dump.txt', 'wb')
+        
         text = ['']
 
         for filename in files:
@@ -108,10 +108,11 @@ class BpmnRag:
         df["text"]= text
         if len(data_dump)==0:
             df_text = bpmn_rag.create_embedding(df_text=df,token_limit=token_limit)
+            with open(os.getenv("DATA_DIRECTORY")+'data_dump/embedding_dump.txt', 'wb') as file:
+                pickle.dump(df_text, file)
         else:
-            df_text = pickle.load(file, 'rb')
-        pickle.dump(df_text, file)
-        file.close()
+            with open(os.getenv("DATA_DIRECTORY")+'data_dump/embedding_dump.txt', 'rb') as file:
+                df_text = pickle.load(file)
         return df_text
 
 
@@ -122,9 +123,14 @@ tracer = init_phoenix("bpmn_rag")
 response_model = ProcessResponse
 context = open(os.getenv("DATA_DIRECTORY")+"bpmns/case_base/case_3-7.txt").read()
 
+with open(os.getenv("DATA_DIRECTORY")+'test_dump.txt', 'wb') as testfile:
+    pickle.dump(context, testfile)
+
 df_text = bpmn_rag.open_embedding(token_limit)
 
 top_n = 4
+
+
 
 
 
