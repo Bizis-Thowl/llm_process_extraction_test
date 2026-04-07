@@ -30,7 +30,7 @@ class DocEmbedder:
         df_emb = pd.DataFrame(columns=['name','embeddings'])
         for i,row in df_text.iterrows():
             print("------------------------------------------------------------")
-            print(f"Starting with document {row['name']}:")
+            print(f"Starting with document {row['name']} - ({i}/{len(df_text)}):")
             chunks = row['chunks']
             embeddings = []
             for chunk in chunks:
