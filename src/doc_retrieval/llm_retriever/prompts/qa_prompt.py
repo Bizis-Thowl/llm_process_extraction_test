@@ -1,3 +1,7 @@
+QA_SYSTEM_PROMPT = """
+
+"""
+
 
 QA_RAG_PROMPT = """
     Du bist ein hochpräziser RAG (Retrieval-Augmented Generation) Assistent.

@@ -16,10 +16,16 @@ dependencies = [
     "openinference-instrumentation-openai>=0.1",
     "jupyter",
     "graphrag",
+    "langchain-text-splitters>=1.1.1",
+    "pandas>=2.3.3",
+    "bs4>=0.0.2",
+    "dotenv>=0.9.9",
+    "langchain-mongodb>=0.11.0",
+    "pymongo>=4.16.0",
 ]
 
 [project.optional-dependencies]
 dev = []
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/process_extraction"]
+packages = ["src/process_extraction","src/doc_retrieval"]

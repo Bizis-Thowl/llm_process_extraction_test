@@ -66,3 +66,9 @@ Make shure to replace the text in the ``<>``-brackets with your own data. The fo
 After that you can start the indexing-process with ``graphrag index`` in the commandline. The following process could take a few minutes.
 
 After the indexing has finished, you are able to query the results with ``graphrag query "<query>"``
+
+# Testing the retrieval capabilities of LLMs (doc_retrieval)
+
+Before you start, it is necessary to install a (local) 
+https://www.mongodb.com/docs/atlas/cli/current/atlas-cli-docker/#std-label-atlas-cli-docker 
+https://www.mongodb.com/docs/atlas/cli/current/install-atlas-cli/
