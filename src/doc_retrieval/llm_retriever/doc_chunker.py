@@ -12,11 +12,18 @@ class DocChunker:
         pass
     
     def chunk_doc(self, html, h_to_split=[("h1", "Header 1"),("h2", "Header 2")]):
+        # Chunks a given html document by using the provided headers.
         html_splitter = HTMLSectionSplitter(h_to_split)
         html_header_splits = html_splitter.split_text(html)
         return html_header_splits
     
     def get_docs(self,dir,df_text = pd.DataFrame(columns =['name','text'])):
+        """
+         Opens the scraped documents and returns them in a dataframe with
+         'name' = Name of the file
+         'text' = Content of the file
+         as columns.
+        """
         for file in os.scandir(dir):
             if file.is_dir():
                 self.get_docs(file.path, df_text)
@@ -31,14 +38,14 @@ class DocChunker:
         return df_text
 
     def get_chunks(self, df_text):
+        """
+        Takes a dataframe of documents and adds a column with a list of chunks for each one.
+        """
         chunks = []
         for i,row in df_text.iterrows():
-            #name = row['name']
             text = row['text']
-            chunks.append(self.chunk_doc(text,h_to_split=[("h1", "Header 1"),("h2", "Header 2")]))
-            #chunks[name]= 
+            chunks.append(self.chunk_doc(text,h_to_split=[("h1", "Header 1"),("h2", "Header 2")])) 
         df_text['chunks'] = chunks
-        #print(df_text)
         return df_text
 
 if __name__ == "__main__":
