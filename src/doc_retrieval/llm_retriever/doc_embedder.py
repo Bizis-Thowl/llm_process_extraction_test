@@ -52,6 +52,7 @@ class DocEmbedder:
                 print(f"Now embedding {chunk.metadata} of document {row['name']}")
                 emb = self.get_embedding(chunk.page_content, model = os.getenv("EMB_MODEL"))
                 embeddings.append(emb)
+                # Fills list of chunks and their corresponding embeddings
                 df_chunk_emb.loc[len(df_chunk_emb)] = [row['name'], chunk, emb]
                 
             #embeddings = chunks.apply(lambda x : self.get_embedding(x[1], model = os.getenv("EMB_MODEL")))
@@ -69,14 +70,12 @@ class DocEmbedder:
         )
         ids = vector_store.add_documents(documents=chunks)
         """
-        #TODO: Repair return 
         return df_text, df_chunk_emb#, df_emb
 
 
     def get_embedding(self, text, model):
         """
         generate and return embedding with a given model
-        
         """
         return self.client_emb.embeddings.create(input = [text], model=model).data[0].embedding
 

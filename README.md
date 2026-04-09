@@ -69,6 +69,17 @@ After the indexing has finished, you are able to query the results with ``graphr
 
 # Testing the retrieval capabilities of LLMs (doc_retrieval)
 
-Before you start, it is necessary to install a (local) 
-https://www.mongodb.com/docs/atlas/cli/current/atlas-cli-docker/#std-label-atlas-cli-docker 
-https://www.mongodb.com/docs/atlas/cli/current/install-atlas-cli/
+Put the scraped html data in a subfolder of ``doc_retrieval`` called ``local_data/html``. Make sure, that you have defined the following variables in your .env file:
+| name | purpose |
+|---|---|
+|BASE_URL| Base_url for the language model that should provide the answers to the ``user_query``|
+|EMB_BASE_URL|Base_url for the embedding model (if it differs from the base_url of the standard language model) |
+|OPENAI_API_KEY MODEL| API-key for the usage of the OpenAI-API (can be set to ``None`` if you are using Ollama) |
+|MODEL|Name of the language model, for the query-responses.|
+|EMB_MODEL| Name of the embedding model, you want to use. |
+|HTML_DIRECTORY|Directory in which the scraped html data is stored|
+|RETRIEVER_DIRECTORY|Directory in which the embedding data is stored|
+
+If you have not already done the embedding process for the chunked documents, the program will create the embeddings on your first run, which can take up to a few minutes. 
+
+After that, the embeddings are stored in a pickle-file in the subdirectory ``local_data/data_dump`` of the ``RETRIEVER_DIRECTORY``. 

@@ -56,7 +56,9 @@ class DocRetriever:
         return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
     
     def search_docs(self,df, user_query, df_chunk_emb, top_n=4):
-        # Searches documents for the highest similarity between embeddings
+        """
+        Searches documents for the highest similarity between chunk-embeddings and the embedded query
+        """
         model = os.getenv("EMB_MODEL")
         embedding = self.embedder.get_embedding(user_query, model=model)
         
@@ -102,6 +104,7 @@ class DocRetriever:
         Lets a language model pick the best result from the top 3 retrieved results and returns a response
         """
         MODEL = os.getenv("MODEL")
+        # Embedding driven search of the document chunks for semantic similarity
         search_res = self.search_docs(df,user_query, df_chunk_emb, top_n=3)
         search_res = search_res.reset_index(drop = True)
         prompt = SELECTION_PROMPT.format(user_query = user_query,
@@ -109,6 +112,7 @@ class DocRetriever:
                                       chunk_2 =search_res.loc[1],
                                       chunk_3 =search_res.loc[2])
         
+        # Query to language model that should pick out the best chunk from the search results
         with self.tracer.start_as_current_span("Process", openinference_span_kind="agent") as span:
             span.set_input(prompt)
             
@@ -122,6 +126,11 @@ class DocRetriever:
             )
             span.set_output(response.model_dump())
             span.set_status(StatusCode.OK)
+        
+        # Extract chunk from response
+        chunk_res = search_res.loc[int(response.chunk_nr)-1]['chunk']
+        print(chunk_res)
+        
         return response
 
 if __name__ == "__main__":
