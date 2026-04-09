@@ -23,7 +23,7 @@ class DocRetriever:
     """
     Retrieval of documents making use of LLMs. 
     """
-    def __init__(self, embedder: DocEmbedder | None):
+    def __init__(self, embedder: DocEmbedder | None, scraped_url):
         #self.client_emb = self.init_client_emb()
         if embedder is not None:
             self.embedder = embedder
@@ -31,6 +31,7 @@ class DocRetriever:
             self.embedder = DocEmbedder()
         self.client = self.init_client()
         self.tracer = init_phoenix("doc-retrieval")
+        self.scraped_url = scraped_url
 
     def init_client(self):
         # Initialize OpenAI client
@@ -77,6 +78,13 @@ class DocRetriever:
         return prompt
     """
 
+    def get_url(self, search_res, df_text):
+        dir = df_text.loc[df_text['name'] == str(search_res['name'])]['url'].values[0]
+        sub_url = dir.split("/skim/")[1]
+        url = self.scraped_url+"skim/"+sub_url
+        return url
+    
+
     def query(self, user_query, df, top_n = 4, response_model = URLRetrievalResponse): #context,
         MODEL = os.getenv("MODEL")
         search_res = self.search_docs(df,user_query, top_n=top_n)
@@ -108,9 +116,9 @@ class DocRetriever:
         search_res = self.search_docs(df,user_query, df_chunk_emb, top_n=3)
         search_res = search_res.reset_index(drop = True)
         prompt = SELECTION_PROMPT.format(user_query = user_query,
-                                      chunk_1 =search_res.loc[0],
-                                      chunk_2 =search_res.loc[1],
-                                      chunk_3 =search_res.loc[2])
+                                      chunk_1 =search_res.loc[0]['chunk'],
+                                      chunk_2 =search_res.loc[1]['chunk'],
+                                      chunk_3 =search_res.loc[2]['chunk'])
         
         # Query to language model that should pick out the best chunk from the search results
         with self.tracer.start_as_current_span("Process", openinference_span_kind="agent") as span:
@@ -129,7 +137,9 @@ class DocRetriever:
         
         # Extract chunk from response
         chunk_res = search_res.loc[int(response.chunk_nr)-1]['chunk']
-        print(chunk_res)
+        response.chunk ={'chunk': chunk_res}
+        response.url = self.get_url(search_res.loc[int(response.chunk_nr)-1], df_text)
+        #print(chunk_res)
         
         return response
 
@@ -138,14 +148,15 @@ if __name__ == "__main__":
     #tracer = init_phoenix("doc_retriever")
     chunker = DocChunker()
     
-    #HTML_DIRECTORY = os.getenv("HTML_DIRECTORY")
-    #df_text = chunker.get_chunks(chunker.get_docs(HTML_DIRECTORY))
+    HTML_DIRECTORY = os.getenv("HTML_DIRECTORY")
+    df_text = chunker.get_chunks(chunker.get_docs(HTML_DIRECTORY))
     embedder = DocEmbedder()
     
     #embedder.init_mongodb_client()
-    df_text, df_chunk_emb = embedder.open_embedding()
+    df_text, df_chunk_emb = embedder.open_embedding(df_text)
     
-    retriever = DocRetriever(embedder=embedder)
+    url = "https://www.th-owl.de/"
+    retriever = DocRetriever(embedder=embedder,scraped_url=url)
     user_query = "Wie kann ich mein Passwort ändern?"
     response = retriever.query_select(user_query,df_text, df_chunk_emb)
     print(response)

@@ -1,4 +1,5 @@
 import os
+import re
 
 #from bs4 import BeautifulSoup
 import pandas as pd
@@ -17,7 +18,7 @@ class DocChunker:
         html_header_splits = html_splitter.split_text(html)
         return html_header_splits
     
-    def get_docs(self,dir,df_text = pd.DataFrame(columns =['name','text'])):
+    def get_docs(self,dir,df_text = pd.DataFrame(columns =['name','text','url'])):
         """
          Opens the scraped documents and returns them in a dataframe with
          'name' = Name of the file
@@ -26,12 +27,13 @@ class DocChunker:
         """
         for file in os.scandir(dir):
             if file.is_dir():
-                self.get_docs(file.path, df_text)
+                self.get_docs(os.path.normpath(file.path).replace("\\","/"), df_text)
             else:
                 with open(file.path, "r", encoding = 'UTF8',errors='ignore') as f:
                     #soup = BeautifulSoup(f, "html.parser")
                     f_name = os.path.basename(os.path.dirname(file.path))
-                    df_text.loc[len(df_text)]= [f_name,f.read()]
+                    url = re.search("/skim/.+", os.path.dirname(file.path)).string
+                    df_text.loc[len(df_text)]= [f_name,f.read(),url]
                     #df_text['name'].append(f.name)
                     #df_text['text'].append(f.read)
                 
