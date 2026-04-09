@@ -9,4 +9,5 @@ class URLRetrievalResponse(BaseModel):
 class URLSelectionResponse(BaseModel):
     answer: str = Field(..., description="Antwort auf die Frage.")
     url: str = Field(...,description="URL mit den relevantesten Inhalten zur gestellten Frage.")
+    chunk_nr: str = Field(...,description="Nummer des Chunks, der am relevantesten ist")
     reason: str = Field(..., description="Begründung für die Antwort und URL.")

@@ -55,14 +55,14 @@ class DocRetriever:
         # Return cosine similarity between two embeddings
         return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
     
-    def search_docs(self,df, user_query, top_n=4):
+    def search_docs(self,df, user_query, df_chunk_emb, top_n=4):
         # Searches documents for the highest similarity between embeddings
         model = os.getenv("EMB_MODEL")
         embedding = self.embedder.get_embedding(user_query, model=model)
         
-        df["similarities"] = df['embeddings'].apply(lambda x: self.cosine_similarity(x, embedding))
+        df_chunk_emb["similarities"] = df_chunk_emb['embedding'].apply(lambda x: self.cosine_similarity(x, embedding))
 
-        res = (df.sort_values("similarities", ascending=False).head(top_n))
+        res = (df_chunk_emb.sort_values("similarities", ascending=False).head(top_n))
         return res
     
     
@@ -77,7 +77,7 @@ class DocRetriever:
 
     def query(self, user_query, df, top_n = 4, response_model = URLRetrievalResponse): #context,
         MODEL = os.getenv("MODEL")
-        search_res = self.search_docs(df,user_query, top_n=3)
+        search_res = self.search_docs(df,user_query, top_n=top_n)
         prompt = self.create_prompt(search_res,user_query)
         
         for i, res in enumerate(search_res):
@@ -97,16 +97,17 @@ class DocRetriever:
                 #prompt = self.refine_prompt(context,search_res,user_query,response)
         return response
     
-    def query_select(self, user_query, df, response_model = URLSelectionResponse):
+    def query_select(self, user_query, df, df_chunk_emb,response_model = URLSelectionResponse):
         """
         Lets a language model pick the best result from the top 3 retrieved results and returns a response
         """
         MODEL = os.getenv("MODEL")
-        search_res = self.search_docs(df,user_query, top_n=3)
+        search_res = self.search_docs(df,user_query, df_chunk_emb, top_n=3)
+        search_res = search_res.reset_index(drop = True)
         prompt = SELECTION_PROMPT.format(user_query = user_query,
-                                      chunk_1 =search_res[0],
-                                      chunk_2 =search_res[1],
-                                      chunk_3 =search_res[2])
+                                      chunk_1 =search_res.loc[0],
+                                      chunk_2 =search_res.loc[1],
+                                      chunk_3 =search_res.loc[2])
         
         with self.tracer.start_as_current_span("Process", openinference_span_kind="agent") as span:
             span.set_input(prompt)
@@ -128,15 +129,15 @@ if __name__ == "__main__":
     #tracer = init_phoenix("doc_retriever")
     chunker = DocChunker()
     
-    HTML_DIRECTORY = os.getenv("HTML_DIRECTORY")
-    df_text = chunker.get_chunks(chunker.get_docs(HTML_DIRECTORY))
+    #HTML_DIRECTORY = os.getenv("HTML_DIRECTORY")
+    #df_text = chunker.get_chunks(chunker.get_docs(HTML_DIRECTORY))
     embedder = DocEmbedder()
     
     #embedder.init_mongodb_client()
-    df_text = embedder.open_embedding(df_text)
+    df_text, df_chunk_emb = embedder.open_embedding()
     
     retriever = DocRetriever(embedder=embedder)
-    user_query = "Wie kann ich mein Passwort zurücksetzen?"
-    response = retriever.query_select(user_query,df_text)
+    user_query = "Wie kann ich mein Passwort ändern?"
+    response = retriever.query_select(user_query,df_text, df_chunk_emb)
     print(response)
 

@@ -3,7 +3,7 @@ import pickle
 
 import instructor
 from openai import OpenAI
-from langchain_mongodb import MongoDBAtlasVectorSearch
+#from langchain_mongodb import MongoDBAtlasVectorSearch
 from pymongo import MongoClient
 
 import pandas as pd
@@ -39,6 +39,7 @@ class DocEmbedder:
         """
         #self.tokenize(df_text, token_limit)
         df_emb = pd.DataFrame(columns=['name','embeddings'])
+        df_chunk_emb = pd.DataFrame(columns=['name','chunk','embedding'])
         for i,row in df_text.iterrows():
             # Iterate over every row in the dataframe
             print("------------------------------------------------------------")
@@ -49,7 +50,9 @@ class DocEmbedder:
             for chunk in chunks:
                 # Recieves embedding for each chunk in the chunk-list
                 print(f"Now embedding {chunk.metadata} of document {row['name']}")
-                embeddings.append(self.get_embedding(chunk.page_content, model = os.getenv("EMB_MODEL")))
+                emb = self.get_embedding(chunk.page_content, model = os.getenv("EMB_MODEL"))
+                embeddings.append(emb)
+                df_chunk_emb.loc[len(df_chunk_emb)] = [row['name'], chunk, emb]
                 
             #embeddings = chunks.apply(lambda x : self.get_embedding(x[1], model = os.getenv("EMB_MODEL")))
             # Adds the list of embeddings in the dataframe at the same row as the chunks
@@ -67,7 +70,7 @@ class DocEmbedder:
         ids = vector_store.add_documents(documents=chunks)
         """
         #TODO: Repair return 
-        return df_text #, df_emb
+        return df_text, df_chunk_emb#, df_emb
 
 
     def get_embedding(self, text, model):
@@ -88,11 +91,11 @@ class DocEmbedder:
 
         if len(data_dump)==0:
             # If data dump is empty, creates new embeddings
-            output = self.create_embedding(df_text=df_text)
+            df_text, df_chunk_emb = self.create_embedding(df_text=df_text)
             with open(os.getenv("RETRIEVER_DIRECTORY")+'data_dump/embedding_dump.txt', 'wb') as file:
-                pickle.dump(output, file)
+                pickle.dump([df_text, df_chunk_emb], file)
         else:
             # opens already existing data dump
             with open(os.getenv("RETRIEVER_DIRECTORY")+'data_dump/embedding_dump.txt', 'rb') as file:
-                output = pickle.load(file)
-        return output
+                df_text, df_chunk_emb = pickle.load(file)
+        return df_text, df_chunk_emb
