@@ -142,6 +142,21 @@ class DocRetriever:
         #print(chunk_res)
         
         return response
+    
+
+
+class Retriever_Controller:
+    
+    _scraped_url = "https://www.th-owl.de/"
+    embedder = DocEmbedder
+    retriever = DocRetriever(embedder=embedder,scraped_url=_scraped_url)
+
+    def retriever_simple_query(user_query):
+        """
+        Returns a answer for self.query_select with minimal input
+        """
+        df_text, df_chunk_emb = embedder.open_embedding()
+        return retriever.query_select(user_query,df_text,df_chunk_emb)
 
 if __name__ == "__main__":
     load_dotenv()
@@ -157,7 +172,7 @@ if __name__ == "__main__":
     
     url = "https://www.th-owl.de/"
     retriever = DocRetriever(embedder=embedder,scraped_url=url)
-    user_query = "Wie kann ich mein Passwort ändern?"
+    user_query = "Gibt es Latex-Vorlagen für das Schreiben von wissenschaftlichen Arbeiten?"
     response = retriever.query_select(user_query,df_text, df_chunk_emb)
     print(response)
 
