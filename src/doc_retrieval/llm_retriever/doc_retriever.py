@@ -138,7 +138,7 @@ class DocRetriever:
         # Extract chunk from response
         chunk_res = search_res.loc[int(response.chunk_nr)-1]['chunk']
         response.chunk ={'chunk': chunk_res}
-        response.url = self.get_url(search_res.loc[int(response.chunk_nr)-1], df_text)
+        response.url = self.get_url(search_res.loc[int(response.chunk_nr)-1], df)
         #print(chunk_res)
         
         return response
@@ -148,31 +148,31 @@ class DocRetriever:
 class Retriever_Controller:
     
     _scraped_url = "https://www.th-owl.de/"
-    embedder = DocEmbedder
+    embedder = DocEmbedder()
     retriever = DocRetriever(embedder=embedder,scraped_url=_scraped_url)
 
     def retriever_simple_query(user_query):
         """
         Returns a answer for self.query_select with minimal input
         """
-        df_text, df_chunk_emb = embedder.open_embedding()
-        return retriever.query_select(user_query,df_text,df_chunk_emb)
+        df_text, df_chunk_emb = Retriever_Controller.embedder.open_embedding()
+        return Retriever_Controller.retriever.query_select(user_query,df_text,df_chunk_emb)
 
 if __name__ == "__main__":
     load_dotenv()
     #tracer = init_phoenix("doc_retriever")
     chunker = DocChunker()
     
-    HTML_DIRECTORY = os.getenv("HTML_DIRECTORY")
-    df_text = chunker.get_chunks(chunker.get_docs(HTML_DIRECTORY))
+    #HTML_DIRECTORY = os.getenv("HTML_DIRECTORY")
+    #df_text = chunker.get_chunks(chunker.get_docs(HTML_DIRECTORY))
     embedder = DocEmbedder()
     
     #embedder.init_mongodb_client()
-    df_text, df_chunk_emb = embedder.open_embedding(df_text)
+    df_text, df_chunk_emb = embedder.open_embedding()
     
     url = "https://www.th-owl.de/"
     retriever = DocRetriever(embedder=embedder,scraped_url=url)
-    user_query = "Gibt es Latex-Vorlagen für das Schreiben von wissenschaftlichen Arbeiten?"
+    user_query = "Wozu dient ein Passwortmanager?"
     response = retriever.query_select(user_query,df_text, df_chunk_emb)
     print(response)
 
