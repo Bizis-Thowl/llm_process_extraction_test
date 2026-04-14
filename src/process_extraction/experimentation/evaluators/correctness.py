@@ -15,7 +15,7 @@ client = instructor.from_openai(client, mode=instructor.Mode.JSON)
 
 def correctness(input: dict, output: dict) -> bool:
 
-    print("starting eval")
+    #print("starting eval")
 
     ground_truth = input.get("ground_truth")
     user_request = input.get("user_request")
@@ -35,3 +35,9 @@ def correctness(input: dict, output: dict) -> bool:
     )
 
     return response.ist_korrekt
+
+def site_correctness(input: dict, output: dict) -> bool:
+    true_url = input.get("true_url")
+    response = output.get("url")
+
+    return true_url == response

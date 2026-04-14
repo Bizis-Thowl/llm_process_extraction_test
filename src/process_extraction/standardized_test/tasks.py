@@ -8,4 +8,5 @@ def doc_retrieval_task(input: Dict[str, Any]):
     answer = Retriever_Controller.retriever_simple_query(user_request)
     final_answer = answer.answer
     context = answer.reason
-    return {"final_answer": final_answer, "context": context}
+    url = answer.url
+    return {"final_answer": final_answer, "context": context, "url": url}

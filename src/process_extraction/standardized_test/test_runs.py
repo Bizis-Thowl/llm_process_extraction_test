@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 #from process_extraction.bpmn_rag.bpmn_rag import bpmn_rag_task
-from process_extraction.standardized_test.test import RAGTest
+from process_extraction.standardized_test.test import RAGTest, RetrievalTest
 from process_extraction.standardized_test.tasks import doc_retrieval_task
 
 def run_bpmn_rag_test():
@@ -19,15 +19,15 @@ def run_bpmn_rag_test():
     )
 
 def run_doc_retrieval_test():
-    rag_test = RAGTest()
+    retrieval_test = RetrievalTest()
 
-    rag_test.run_rag_experiments(
+    retrieval_test.run_rag_experiments(
         runs = 5,
         tasks=[doc_retrieval_task],
         loc_qa_dataset= os.getenv("TEST_DATA"),
         dataset_name= "doc_retrieval_evaluation",
         exp_name= "Qwen3-30B-A3B-Instruct",
-        exp_description= "Evaluation of the documant retrieval with LLM assistance"
+        exp_description= "Evaluation of the document retrieval with LLM assistance"
     )
 
 if __name__ == "__main__":
